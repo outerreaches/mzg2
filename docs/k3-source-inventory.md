@@ -4,9 +4,21 @@ Date: 2026-08-23
 
 ## Purpose
 
-Preserve the qualified Moonshine MZG2 implementation before extracting or optimizing it. The source of truth is still a broad, uncommitted Moonshine working tree, so this document records boundaries and commit order without copying implementation code into this repository.
+Preserve the qualified Moonshine MZG2 implementation before extracting or optimizing it. This document first recorded the broad uncommitted working tree, then its reviewed resolution, without copying implementation code into this repository.
 
-The corresponding machine-readable identity is maintained in the private evidence repository at `manifests/k3-runtime-source-freeze-20260823.json`.
+The corresponding machine-readable capture identity is maintained in the private evidence repository at `manifests/k3-runtime-source-freeze-20260823.json`. The capture remains immutable; the current clean source identity is the commit sequence below.
+
+## Clean-source resolution
+
+Moonshine `main` is clean at `c773930` and contains the captured work in five local commits:
+
+1. `c5b65c7` — portable prefix and route planning cores;
+2. `c20dae7` — portable static-Q8 screening core;
+3. `4dc9506` — MZG1/MZG2 codecs, builders, and tests;
+4. `cdc1755` — engine/build/fixture/documentation integration;
+5. `c773930` — fail-closed store/model validation and diagnostic-capture hardening.
+
+The final hardening commit also records DietGPU as design prior art and Zstandard as a separate platform dependency. Builds and runtime tests remain deferred until the active workload ends.
 
 ## Runtime identity
 
@@ -70,16 +82,15 @@ The MZG2 integration cannot safely be committed as one blind working-tree snapsh
 
 Every MZG2 hunk therefore needs a surgical review or a precursor commit for its real dependency. Do not commit all dirty Moonshine work under an MZG2 message.
 
-## Proposed Moonshine commit sequence
+## Qualification still required
 
-1. **Record the baseline:** source/runtime/evidence hashes and private recovery archives.
-2. **Partition unrelated work:** commit or intentionally defer prefix, Q8/static-layout, chat/server, and other features.
-3. **Commit MZG1 prerequisites separately:** retain the failed-path reader/transcoder only if still desired for reproducibility.
-4. **Commit MZG2 core and builder:** `k3_mzg2.*`, transcode tools, focused build targets, and model-free/CPU validation.
-5. **Commit decode integration:** lifecycle, staging, span selection, direct-to-cache admission, copy removal, and post-stream integrity checks.
-6. **Commit prefill integration:** temporary-output ownership and exact selected-prefill behavior.
-7. **Commit reporting/tests/docs:** profile output, allocation fixtures, instructions, architecture, changelog, and measured evidence.
-8. **Qualify a detached clean worktree:** smallest model-free gate, bounded real-weight decoder fixture, engine initialization, then accepted engine fixture after the active workload ends.
+The source history is clean, but source qualification is intentionally incomplete while the accepted workload owns the GPU. After it ends:
+
+1. rebuild from a detached clean worktree at `c773930`;
+2. run portable/model-free gates and the warning-free full build;
+3. run bounded MZG corruption/model-table fixtures;
+4. run engine initialization and selected-prefill exactness;
+5. rerun an accepted MZG2 engine fixture before treating `c773930` as a replacement runtime identity.
 
 ## Extraction boundary after Moonshine is clean
 
