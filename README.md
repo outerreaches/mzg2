@@ -18,6 +18,8 @@ MZG2 is not yet a universal GPU codec. Initial support is limited to the Kimi K3
 - `tests/`: golden vectors, parser/corruption tests, and HIP qualification.
 - `docs/`: architecture, draft format, provenance, security, and roadmap.
 
+Current priorities and kill gates are in [`docs/optimization-roadmap.md`](docs/optimization-roadmap.md).
+
 ## Correct claims
 
 The K3 transform is **dequantized-value-preserving** and exact against its zero-gauge-canonical representation. It is not byte-exact to source MXFP4 negative zero. The rANS algorithm and GPU interleaving patterns have substantial prior art; the MZG2 contribution is the SSD-to-GPU-cache systems integration and its end-to-end evidence.
