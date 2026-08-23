@@ -4,6 +4,8 @@ This roadmap ranks work by risk-adjusted end-to-end impact. Estimates are screen
 
 ## P0 — improve the existing pipeline without changing the bitstream
 
+Implementation ownership and patch sequencing are defined in [`p0-existing-format-plan.md`](p0-existing-format-plan.md).
+
 1. **Compressed-path queue-depth sweep:** test QD 1/2/4/8 against one route trace. Keep a new QD only for >=2% median pipeline improvement without tail or thermal regression.
 2. **Event-driven prefill buffer reuse:** replace per-expert global stream synchronization with per-buffer events. Require safe input/output reuse, fail-closed integrity, exact output, and >=5% routed-prefill improvement.
 3. **One integrity-flag clear per layer/batch:** remove per-expert `hipMemsetAsync`. Require no stale-bit failures and >=1% layer gain.

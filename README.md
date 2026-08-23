@@ -18,7 +18,7 @@ MZG2 is not yet a universal GPU codec. Initial support is limited to the Kimi K3
 - `tests/`: golden vectors, parser/corruption tests, and HIP qualification.
 - `docs/`: architecture, draft format, provenance, security, and roadmap.
 
-Current priorities and kill gates are in [`docs/optimization-roadmap.md`](docs/optimization-roadmap.md).
+Current priorities and kill gates are in [`docs/optimization-roadmap.md`](docs/optimization-roadmap.md). The P0 ownership and scheduling design is in [`docs/p0-existing-format-plan.md`](docs/p0-existing-format-plan.md). The frozen K3 implementation boundary and Moonshine commit plan are in [`docs/k3-source-inventory.md`](docs/k3-source-inventory.md).
 
 ## Correct claims
 
