@@ -1,0 +1,31 @@
+# Build products
+/build/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Generated stores and model data
+*.mzg2
+*.safetensors
+*.gguf
+*.bin
+/models/
+/private/
+
+# Benchmark output
+/results-local/
+*.trace.csv
+*.ledger.csv
+*.cache.csv
+*.routes.csv
+
+# Editors and Python
+__pycache__/
+*.py[cod]
+.venv/
+.vscode/
+.idea/
+.DS_Store
