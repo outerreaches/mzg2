@@ -2,7 +2,23 @@
 
 This plan changes scheduling and command structure only. It does not change the MZG2 v2 bitstream, numerical contract, model store, cache policy, or default production selection.
 
-Do not implement or compile it while the accepted Moonshine workload is active.
+## Outcome 2026-08-24
+
+All three P0 candidates were screened against the promoted 128K/30 MZG2 engine
+and closed without retained source changes:
+
+- QD1 was slower; QD4 and QD8 did not reproduce a gain over QD2. The
+  confirmatory QD4/QD2 pair had identical decode wall (33.013/33.012 s) and
+  slower QD4 prompt wall (55.266/52.253 s). **Keep QD2.**
+- Layer-scoped integrity clearing preserved exact output but changed mean
+  decode wall by only -0.05% and regressed prompt wall 2.77%, below the 1%
+  promotion gate. **Reverted.**
+- Event-driven prefill buffer reuse preserved exact output but regressed mean
+  prompt wall 1.08%, below the 5% gate. **Reverted.**
+
+Artifacts: `moonshine-experiments/mzg2-qd-screen-20260824/`,
+`mzg2-layer-clear-screen-20260824/`, and
+`mzg2-prefill-event-screen-20260824/`.
 
 ## Goals
 

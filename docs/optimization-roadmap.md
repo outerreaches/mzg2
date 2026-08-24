@@ -50,6 +50,10 @@ Separately sweep 18/20/21/24 KiB tiles. Require >=0.08 points real gain and >=25
 
 Do not reopen without materially different data: scale-conditioned packed context, previous/pair context, tile-local or per-plane models, scale delta/RLE, additional MXFP4 gauge transforms, sign/magnitude or bitplane factorizations, tuple coding, simple 32/64 KiB tiles, CPU admission work, or universally compressed cache slots.
 
+Universal compressed residency now has direct engine evidence: fixed-stride C34
+gained 2.326 hit points over decoded C30 but regressed prompt wall 2.10% and
+decode wall 4.75%. The exact prototype was reverted.
+
 ## Promotion funnel
 
 Analytical/CPU screen -> exactness and corruption -> mapped-input benchmark -> concurrent compute -> layer-local A/B -> bounded full engine -> explicit approval before a full derived-store build.
