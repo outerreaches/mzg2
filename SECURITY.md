@@ -1,7 +1,21 @@
 # Security policy
 
-MZG2 is not yet released and has no supported versions.
+MZG2 is pre-release: the specification draft is public-facing, the codec
+implementation is not yet released in this repository, and there are no
+supported versions.
 
-The reference implementation assumes trusted local model stores. Decoder errors invalidate the entire destination buffer, including bytes written before the error was reported. The current K3 checksum is designed for accidental corruption detection and is not cryptographic.
+**Trust model:** the decoder assumes trusted local model stores. Decoder
+errors invalidate the entire destination buffer, including bytes written
+before the error was reported, and the tile checksum detects accidental
+corruption only — it is not cryptographic and is not an authenticity
+mechanism. Do not decode stores from untrusted sources.
 
-Before public release, the project must define its hostile-input boundary, strengthen or explicitly retain the checksum contract, and test malformed headers, models, descriptors, offsets, rANS states, terminal cursors, raw escapes, truncation, and output aliasing.
+The full model — defenses, limits, and the planned pre-normative hardening
+(fuzzing, malformed-input matrix, hostile-input boundary definition) — lives
+in [`docs/security.md`](docs/security.md).
+
+## Reporting
+
+Use GitHub security advisories on this repository once public, or the contact
+route listed on the repository profile. Please do not open public issues for
+memory-safety reports before a fix is available.

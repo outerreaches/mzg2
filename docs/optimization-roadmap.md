@@ -4,7 +4,7 @@ This roadmap ranks work by risk-adjusted end-to-end impact. Estimates are screen
 
 ## P0 — improve the existing pipeline without changing the bitstream
 
-Implementation ownership and patch sequencing are defined in [`p0-existing-format-plan.md`](p0-existing-format-plan.md).
+P0 was screened 2026-08-24 against the promoted MZG2 engine and closed without retained source changes: QD2 kept (QD1/4/8 rejected), layer-scoped integrity clearing and event-driven prefill reuse reverted on gate misses. The full screening design lives in the private experiments repository.
 
 1. **Compressed-path queue-depth sweep:** test QD 1/2/4/8 against one route trace. Keep a new QD only for >=2% median pipeline improvement without tail or thermal regression.
 2. **Event-driven prefill buffer reuse:** replace per-expert global stream synchronization with per-buffer events. Require safe input/output reuse, fail-closed integrity, exact output, and >=5% routed-prefill improvement.
