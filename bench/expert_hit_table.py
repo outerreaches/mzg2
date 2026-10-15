@@ -2,7 +2,9 @@
 """Per-request expert cache hit-rate table from moonshine log."""
 import re, sys
 
-path = sys.argv[1] if len(sys.argv) > 1 else '/home/alex/.omp/run/daemons/47f4d9280f19e967/daemons/moonshine-server/output.log'
+if len(sys.argv) < 2:
+    raise SystemExit(f"usage: {sys.argv[0]} <moonshine-server log file>")
+path = sys.argv[1]
 kv = lambda s: dict(re.findall(r'(\w+)=(".*?"|\S+)', s))
 
 print(f"{'req':>4} {'ctx':>7} {'reuse%':>7} {'gen':>5} {'decode_t/s':>10} {'read_GiB':>9} {'expert_hit%':>11} {'hits/total':>22} {'GiB/gen_tok':>11}")
