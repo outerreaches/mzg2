@@ -14,43 +14,76 @@ with exact generated tokens and values in the recorded gates.
 
 ## Status
 
-**Public draft, first published 2026-10-15** (tag `v0.1.0-draft`). This
-repository is the **specification and design home for MZG2**: the format
-specification (draft v0.1), architecture, provenance, security notes, and
-roadmaps are public here. The specification stays pre-normative until the golden
-vectors and CPU reference codec land with the extraction (see
-[`docs/roadmap.md`](docs/roadmap.md)).
+**Public, and the codec ships here as of 2026-10-20** — the model-independent
+core, the CPU reference codec, the store reader, golden vectors, the HIP
+decoder and the Kimi K3 adapter, extracted from the qualified implementation.
+The repository was first published on 2026-10-15 (tag `v0.1.0-draft`) as the
+specification and design home; this is the extraction that release pointed at.
 
-The qualified reference implementation — the K3 codec, transcode tools, and
-their tests — ships today as part of the
-**[Moonshine](https://github.com/outerreaches/moonshine)** project. The
-model-independent core (format/codec API, CPU reference codec, golden vectors,
-HIP decoder) will be extracted into this repository; see
-[`docs/roadmap.md`](docs/roadmap.md) for the extraction plan and gates.
+What that gives you: a portable C library that encodes and decodes the v2
+bitstream with no GPU, no ROCm and no model weights, plus a HIP kernel for the
+wave32 path. What it does not yet give you: a published store writer (building
+a K3 store still means the
+[Moonshine](https://github.com/outerreaches/moonshine) transcoder), a wave64
+kernel, or a second model adapter.
 
-MZG2 is not yet a universal GPU codec. Initial support is limited to the Kimi
-K3 research profile on ROCm wave32 hardware. A second model adapter — GLM 5.3
-first when official weights land, DeepSeek V4 Pro as the alternative — remains
-the gate that tests whether the core boundary is genuinely reusable before any
-general release.
+Two limits worth stating up front:
+
+- **The HIP decoder compiles but has not been run in this repository.** It is
+  a direct port of the qualified kernel, reviewed against it, and the CPU
+  reference is its oracle — but the parity run is still owed. See
+  [`docs/extraction.md`](docs/extraction.md).
+- **MZG2 is not a universal GPU codec.** One adapter exists. A second model
+  family — GLM 5.3 first, DeepSeek V4 Pro as the alternative — is the gate
+  that tests whether the core boundary is genuinely reusable. The
+  specification and this README state the K3-only scope rather than holding
+  publication on it.
+
+## Build and test
+
+No GPU, no ROCm and no model weights are needed for the CPU targets:
+
+```sh
+make            # library, tools and the test suite
+make test       # 316 model-free checks across five binaries
+make hip        # the HIP decoder (needs ROCm; GPU_ARCH=gfx1151 by default)
+```
+
+To check an existing store — it decodes blocks and, with `--reencode`,
+requires `encode(decode(block)) == block`:
+
+```sh
+./tools/mzg2_store_check kimi-k3 /path/to/expert-store-mzg2 --experts 4 --reencode
+```
 
 ## Contents
 
-- [`docs/format.md`](docs/format.md) — **MZG2 format specification, draft
-  v0.1** (K3 profile, format version 2): container layout, model tables, tile
-  decode, integrity, versioning.
+Specification and design:
+
+- [`docs/format.md`](docs/format.md) — **the MZG2 format specification**
+  (v2): container layout, model tables, tile decode, integrity, versioning.
 - [`docs/architecture.md`](docs/architecture.md) — objective, reference
   pipeline, core/adapter split, performance gate.
-- [`docs/provenance.md`](docs/provenance.md) — source lineage, prior art, and
-  the code-lineage audit summary.
+- [`docs/extraction.md`](docs/extraction.md) — what the extraction moved, the
+  findings it produced, and the evidence behind it.
+- [`docs/provenance.md`](docs/provenance.md) — source lineage, prior art,
+  code-lineage audit, AI-assistance disclosure.
 - [`docs/security.md`](docs/security.md) — threat model, checksum properties,
-  error semantics, and planned hardening.
-- [`docs/roadmap.md`](docs/roadmap.md) — phases from the frozen K3 reference
-  to a public codec release.
+  error semantics, planned hardening.
+- [`docs/roadmap.md`](docs/roadmap.md) — phases and their status.
 - [`docs/optimization-roadmap.md`](docs/optimization-roadmap.md) — the
   measured optimization funnel and closed ideas.
-- `core/`, `adapters/`, `bench/`, `tests/` — extraction targets (see their
-  READMEs); the working analysis scripts live in `bench/`.
+
+Code:
+
+- [`core/`](core/README.md) — the model-independent format, reference codec,
+  store reader and HIP decoder.
+- [`adapters/kimi-k3/`](adapters/kimi-k3/README.md) — the qualified K3
+  profile: geometry, MXFP4 plane layout, zero-gauge transform, source
+  binding.
+- [`tests/`](tests/README.md) — model-free tests and the golden vectors.
+- [`tools/`](tools/README.md) — store checker and vector generator.
+- [`bench/`](bench/README.md) — analysis scripts.
 
 ## Correct claims
 
@@ -61,12 +94,17 @@ substantial prior art (see `docs/provenance.md`); the MZG2 contribution is the
 SSD-to-GPU-cache systems composition, its fail-closed format design, and its
 end-to-end evidence — not a new entropy coder.
 
+Measured numbers in this repository come from a single qualified
+configuration on one machine. They are engineering fixtures, not benchmarks.
+
 ## Data and weights
 
 No model weights or derived expert-store blocks belong in this repository.
 Users must obtain model artifacts under their original licenses and derive any
 local store themselves. The format specifies a source-manifest binding so a
-store states which source revision it was derived from.
+store states which source revision it was derived from. The golden vectors in
+`tests/vectors/` are synthetic: they are generated from a seed by
+`tests/vectors.h` and have no model behind them.
 
 ## License
 

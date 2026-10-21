@@ -1,12 +1,20 @@
-# MZG2 format specification — draft v0.1 (K3 profile, format version 2)
+# MZG2 format specification — v2
 
-Status: **pre-normative draft.** This document specifies the MZG2 v2 on-disk
-format as produced and consumed by the qualified Kimi K3 implementation in the
-Moonshine project (files `k3_mzg2.h` / `k3_mzg2.cu` and the transcode tools,
-<https://github.com/outerreaches/moonshine>). It is published ahead of the
-standalone codec extraction so the format can be reviewed; normative status,
-golden vectors, and the CPU reference codec arrive with the extraction (see
-`docs/roadmap.md`).
+Status: **normative for format version 2**, as of the 2026-10-20 codec
+extraction. The two artifacts this document previously waited on now exist in
+this repository: a portable **CPU reference codec** (`core/src/codec.c`) and
+**golden vectors** (`tests/vectors/`) that it encodes and decodes. Where this
+document and the reference implementation disagree, that is a bug in one of
+them; where the reference implementation and the original qualified
+implementation disagree, `docs/extraction.md` records it.
+
+The format is still exercised by one model profile (Kimi K3) on wave32
+hardware. Section 13 lists what remains open, including the one place where a
+block is not self-describing.
+
+The qualified implementation this was written from is in the Moonshine
+project (`k3_mzg2.h` / `k3_mzg2.cu` and the transcode tools,
+<https://github.com/outerreaches/moonshine>).
 
 The format was designed for one job: stream MoE expert weights from storage and
 decompress directly into an admitted destination (an expert-cache slot) on the
@@ -26,6 +34,10 @@ GPU, without a CPU decode step. Everything below is subordinate to that goal.
   (reject the block) if any check fails; a conforming writer must only produce
   blocks satisfying them. Corruption discovered during decode sets an error
   flag; the destination is invalid after any decode error (§9).
+- **Profile:** a reader cannot work from the bitstream alone. A profile
+  supplies the container magic, the decoded payload size, the layer/expert
+  bounds, the sidecar naming, the source binding, and — per plane kind — the
+  symbol width and the permitted value alphabet (§8.3, §13).
 
 ## 2. Conventions
 
@@ -121,6 +133,11 @@ payload; each region must lie within `block_bytes`; `model_offset` must be a
 multiple of 4 and `descriptor_offset` a multiple of 8; `payload_offset` must be
 a multiple of 4.
 
+> The qualified K3 reader did not enforce the descriptor alignment: it wrote
+> the check against the packed descriptor's `alignof`, which is 1. The
+> reference implementation enforces 8, which every block that reader produced
+> satisfies (the table sits at 8,560). See `docs/extraction.md`.
+
 ### 6.1 Block header (64 bytes)
 
 | field | type | K3 v2 requirement |
@@ -186,7 +203,7 @@ Descriptor `i` describes output tile `i`:
 | `output_bytes` | `u32` | `== 16384` (K3 profile; all tiles full) |
 | `kind` | `u32` | low byte = model index (0 or 1); bit 31 = raw escape; no other bits |
 | `reserved` | `u32` | `0` |
-| `checksum` | `u64` | low 32 bits carry the tile checksum (§8.4); high 32 bits zero |
+| `checksum` | `u64` | low 32 bits carry the tile checksum (§8.4); high 32 bits **must be** zero, and a reader must reject a nonzero high word (the qualified K3 reader compared only the low word) |
 
 Additional bounds: `output_offset + output_bytes ≤ EXPERT_BYTES`; payload
 ranges within `block_bytes`; descriptor count equals `tile_count`.
@@ -199,6 +216,12 @@ applies. The encoder falls back to raw whenever encoding would not shrink a
 tile (incompressible regions cost an escape, not a larger block).
 
 ### 8.3 Encoded tile payload
+
+**Symbol width comes from the profile, not the block.** The model tables
+(§7) carry frequencies, cumulative offsets, a decode table and the value
+alphabet, but not how many bits a symbol occupies. The profile states a
+`symbol_bits` of 4 or 8 for each model index; a decoder that lacks it cannot
+decode. This is a known gap in v2, listed in §13.
 
 For an encoded (non-raw) tile:
 
@@ -316,13 +339,30 @@ source MXFP4: negative-zero gauge choices are canonicalized (E2M1 `−0` is
 folded before encoding), so bytes fed in and their provably equivalent
 canonical forms may differ bit-wise. This is a deliberate, documented trade.
 
-## 13. To normative status
+## 13. Open items
 
-Before this document becomes normative (planned with the standalone codec
-extraction), it needs: golden byte-level vectors and a model-free CPU
-reference decoder proving they decode; a frozen cross-ISA statement (wave32
-required in v2; wave64/discrete-GPU backends unspecified); a formalized
-version-evolution policy; a decision on which currently-K3-profile semantics
-(two fixed plane models, tile geometry) move to adapter metadata in a future
-format revision; and resolution of the remaining publication-checklist items
-recorded in the project vault.
+Closed by the 2026-10-20 extraction: golden byte-level vectors and a
+model-free CPU reference codec that produces and consumes them
+(`tests/vectors/`, `core/src/codec.c`), and the core/adapter split that
+separates these rules from one model's constants.
+
+Still open:
+
+- **A block does not describe its own symbol width** (§8.3). The profile
+  supplies it, so the container is not self-describing where it has more than
+  one plane kind. Fixing it is a format revision, not an erratum: v2 is what
+  the existing derived store uses. Moving plane widths — and possibly tile
+  geometry — into block metadata is the leading v3 candidate.
+- **Cross-ISA statement.** v2 requires a 32-lane wave: the renormalization
+  word order is defined by 32 lanes consuming words in increasing lane order.
+  wave64 and discrete-GPU backends are unspecified, and a wave64 target needs
+  its own kernel rather than a recompile.
+- **A second independent implementation.** The reference codec and the HIP
+  kernel share an author and a design; the vectors pin them against drift,
+  not against a shared misreading. An implementation written from this
+  document alone is what would test it.
+- **Version-evolution policy.** No flag is assigned; future flags arrive with
+  a new version number rather than silent adoption (§10). The negotiation
+  story for a v3 reader meeting v2 stores is not yet written.
+- **Adversarial hardening** (`docs/security.md`): the validation surface is
+  covered by hand-written injected-defect tests, not by fuzzing.

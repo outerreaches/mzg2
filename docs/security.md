@@ -41,6 +41,17 @@ against, what they do not, and which guarantees are contracts.
 - **Small fixed ABI:** structure sizes are asserted at compile time; reserved
   fields and unknown flags/kinds are rejection conditions, not warnings.
 
+Since 2026-10-20 each of these defenses has a test that injects one defect
+into an otherwise valid block or store and requires the rejection: 45 cases
+over the block rules and integrity checks, 30 over the store rules
+(`tests/test_malformed.c`, `tests/test_store.c`). A defense that has never
+been observed to fire is not counted as one.
+
+**The HIP decoder in this repository has not been executed** (see
+`docs/extraction.md`). Its in-decode checks are a line-by-line port of the
+qualified kernel's, but the claims above are evidenced for the CPU reference
+codec only until the parity run happens.
+
 ## What the tile checksum does and does not do
 
 The checksum is a non-cryptographic 32-bit folded XOR over output dwords

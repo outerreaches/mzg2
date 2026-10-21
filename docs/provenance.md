@@ -25,10 +25,32 @@ Qualification identities (August 2026):
   built); an exact clean rebuild was an explicitly deferred qualification
   step, not a hidden one.
 
-When the standalone core is extracted into this repository, its provenance
-records will pin the exact Moonshine revision used, and any retained MIT
-notices for inherited Moonshine, DS4, or GGML lineage will travel with the
-code.
+## Extraction lineage (2026-10-20)
+
+The code in `core/` and `adapters/kimi-k3/` was extracted from the Moonshine
+files below, at the clean-source commits recorded above. It is a
+reimplementation against the same format rather than a copy: the constants
+became profile fields, the C++/HIP store reader became portable C, and the
+transcoder's scalar encoder and verifier became the published reference
+codec. No third-party source was introduced.
+
+| Extracted into | From |
+|---|---|
+| `core/include/mzg2/format.h` | `k3_mzg2.h` (container ABI, model layout, error flags) |
+| `core/src/block.c`, `core/src/store.c` | `k3_mzg2.cu` (host validation, store map, spans) |
+| `core/src/decode_hip.hip` | `k3_mzg2.cu` (`decode_tiles_kernel`) |
+| `core/src/codec.c`, `core/src/model.c` | `tools/transcode_mzg2_layer.cu` (`build_model`, `encode_tile`, `encode_block`, `decode_block`) |
+| `adapters/kimi-k3/` | constants and the zero-gauge transform from both files |
+
+The frequency-quantization arithmetic and its tie-breaks were ported
+unchanged, because the resulting table bytes are part of a stored block.
+`docs/extraction.md` records the two places where the published core is
+stricter than the original reader, the one implicit behaviour that became an
+explicit profile field, and the byte-level evidence that the extracted codec
+reproduces the qualified store.
+
+No model weights, derived store blocks, logs, prompts or host paths were
+moved. The golden vectors are synthetic.
 
 ## Code-lineage audit
 

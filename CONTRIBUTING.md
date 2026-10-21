@@ -1,10 +1,15 @@
 # Contributing
 
-This repository currently carries the MZG2 specification and design
-documentation; the model-independent codec, CPU reference codec, and golden
-vectors arrive with the extraction (see `docs/roadmap.md`). Format review and
-documentation issues are welcome now — that is the point of publishing the
-draft early.
+This repository carries the MZG2 specification and the extracted codec: the
+model-independent core, the CPU reference codec, golden vectors, the HIP
+decoder and the Kimi K3 adapter (`docs/extraction.md`). Format review,
+documentation issues and an independent implementation read from
+`docs/format.md` are all welcome — the last one most of all, since the
+reference codec and the HIP kernel share an author and cannot test each
+other's assumptions.
+
+`make test` must pass before a change is proposed: 316 model-free checks, no
+GPU and no model weights required.
 
 Core rules, for documents and (future) code alike:
 

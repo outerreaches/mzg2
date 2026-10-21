@@ -1,8 +1,8 @@
 cff-version: 1.2.0
-message: "If you use MZG2 in research, cite this repository (specification draft)."
+message: "If you use MZG2 in research, cite this repository."
 title: "MZG2: direct-to-destination GPU decompression for streamed MoE expert weights"
-version: 0.1.0-draft
-date-released: "2026-10-15"
+version: 0.2.0
+date-released: "2026-10-20"
 license: MIT
 repository-code: "https://github.com/outerreaches/mzg2"
 authors:

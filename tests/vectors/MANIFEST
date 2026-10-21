@@ -1,0 +1,6 @@
+# MZG2 golden vectors. Columns: name, layer, expert, block_bytes,
+# tile_count, raw_tiles, payload FNV-1a, block FNV-1a.
+# Profile: the synthetic fixture in tests/fixture.h, not a model.
+fixture-mixed 1 0 20480 8 2 686507f8a17c84c6 fc150c2e4615b705
+fixture-uniform 1 1 20480 8 4 359c111159d9c198 28b26dec250a3a51
+fixture-degenerate 2 3 16384 8 0 f0d1561e10bd3325 cbf01349b6d43c8e

@@ -7,7 +7,17 @@
 *.dll
 *.exe
 
-# Generated stores and model data
+# Test and tool binaries (sources are tracked, products are not)
+/tests/test_codec
+/tests/test_format
+/tests/test_malformed
+/tests/test_store
+/tests/test_vectors
+/tools/mzg2_store_check
+/tools/mzg2_vectors
+
+# Generated stores and model data. Note: the synthetic golden vectors use
+# the .mzg2blk suffix and are deliberately tracked (tests/vectors/).
 *.mzg2
 *.safetensors
 *.gguf
