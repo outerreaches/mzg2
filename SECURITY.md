@@ -1,8 +1,7 @@
 # Security policy
 
-MZG2 is pre-release: the specification draft is public-facing, the codec
-implementation is not yet released in this repository, and there are no
-supported versions.
+MZG2 is published as a specification draft: the format specification is public, the codec
+implementation is not yet released in this repository, and there are no supported versions.
 
 **Trust model:** the decoder assumes trusted local model stores. Decoder
 errors invalidate the entire destination buffer, including bytes written

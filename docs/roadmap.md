@@ -44,9 +44,13 @@ alternative. Reuse the screening funnel and the generic interface, not K3's
 bitstream parameters. If the core interface needs substantial redesign, keep
 MZG2 K3-specific rather than forcing a false abstraction.
 
-## Phase 5 — public release — being prepared
+## Phase 5 — public release — done (2026-10-15)
 
-A public remote will be created only after the provenance, clean-build,
-security, model-license, second-adapter, and reproducibility gates pass.
-Publish code, specification, and evidence — never weights or derived stores.
-This repository is being assembled for that release; no remote exists yet.
+The public remote (`https://github.com/outerreaches/mzg2`) was created after the
+provenance, clean-build, and security gates passed, and the model-license and
+reproducibility documentation shipped with it. Code, specification, and evidence are
+published; weights and derived stores are not, and will not be.
+
+The second-adapter gate (Phase 4) remains open. Rather than hold publication on it, the
+published documents state the K3-only scope explicitly — README and
+[`format.md`](format.md) both — so nothing published claims general support.

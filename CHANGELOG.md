@@ -1,6 +1,16 @@
 # Changelog
 
-## 0.1.0-draft — 2026-10-15 (pre-publication)
+## Unreleased — documentation pass, 2026-10-21
+
+- Status language corrected now that the repository is public: `README.md`,
+  `SECURITY.md`, and roadmap Phase 5 no longer describe the repository as being
+  prepared for release.
+- Roadmap Phase 5 marked **done (2026-10-15)**, with Phase 4 (second adapter)
+  explicitly still open and the K3-only scope stated in the published documents.
+- Brand links point at `https://outerreaches.si`; the `outerreaches.space`
+  hostname redirects there.
+
+## 0.1.0-draft — 2026-10-15 (published)
 
 Repository assembled for public release:
 

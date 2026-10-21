@@ -14,9 +14,12 @@ with exact generated tokens and values in the recorded gates.
 
 ## Status
 
-This repository is the **specification and design home for MZG2**, being
-prepared for public release. It currently contains the format specification
-(draft v0.1), architecture, provenance, security notes, and roadmaps.
+**Public draft, first published 2026-10-15** (tag `v0.1.0-draft`). This
+repository is the **specification and design home for MZG2**: the format
+specification (draft v0.1), architecture, provenance, security notes, and
+roadmaps are public here. The specification stays pre-normative until the golden
+vectors and CPU reference codec land with the extraction (see
+[`docs/roadmap.md`](docs/roadmap.md)).
 
 The qualified reference implementation — the K3 codec, transcode tools, and
 their tests — ships today as part of the
@@ -26,9 +29,10 @@ HIP decoder) will be extracted into this repository; see
 [`docs/roadmap.md`](docs/roadmap.md) for the extraction plan and gates.
 
 MZG2 is not yet a universal GPU codec. Initial support is limited to the Kimi
-K3 research profile on ROCm wave32 hardware. A second model adapter — planned
-for GLM 5.3 or DeepSeek V4 Pro — will test whether the core boundary is
-genuinely reusable before any general release.
+K3 research profile on ROCm wave32 hardware. A second model adapter — GLM 5.3
+first when official weights land, DeepSeek V4 Pro as the alternative — remains
+the gate that tests whether the core boundary is genuinely reusable before any
+general release.
 
 ## Contents
 
@@ -72,4 +76,4 @@ GGML lineage. See [`docs/provenance.md`](docs/provenance.md).
 
 ---
 
-Maintained by Alex Mazurovsky / [Outer Reaches](https://outerreaches.space).
+Maintained by Alex Mazurovsky / [Outer Reaches](https://outerreaches.si).
