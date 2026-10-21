@@ -16,15 +16,20 @@ library API, GPU execution coverage, or multi-model support.
 - [x] Record the extraction's 316 passing model-free checks and sampled
   byte-identical re-encoding of 14 qualified-store experts.
 - [x] Reconcile documentation, security policy and development-version metadata.
-- [ ] Add clean GCC/Clang CI and address/undefined-behaviour sanitizer gates.
-- [ ] Add bounded, synthetic-only CPU fuzzing for blocks, model tables and
+- [x] Add clean GCC/Clang CI and address/undefined-behaviour sanitizer gates.
+- [x] Add bounded, synthetic-only CPU fuzzing for blocks, model tables and
   store parsing; retain any discovered regression as a deterministic test.
-- [ ] Prepare a HIP parity executable covering golden vectors, a bounded
+- [x] Prepare a HIP parity executable covering golden vectors, a bounded
   source-bound store sample, injected defects, guards and recovery. Compile
   it without executing it while another workload owns the GPU.
-- [ ] Document a pinned public store-building route. A separate writer in
+- [x] Document a [pinned public store-building route](store-building.md). A separate writer in
   this repository is optional for this release if the Moonshine route is
   reproducible and its dependencies and resource costs are explicit.
+
+Commands and coverage: [CPU tests](../tests/README.md),
+[fuzzing](../tests/fuzz/README.md), [GPU runner](gpu-qualification.md).
+The CPU suite now has 663 assertions. The original 316-check extraction
+result remains a historical record, not the current suite count.
 
 Use modest CPU parallelism and bounded runs on a serving host. Synthetic
 tests need neither modelstore I/O nor model weights. Building a full derived

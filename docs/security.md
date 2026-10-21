@@ -15,8 +15,8 @@ against, what they do not, and which guarantees are contracts.
   HIP decode kernels are **not** hardened against crafted inputs, and the
   checksum is not an authentication mechanism. **Do not decode stores from
   untrusted sources.** A normative bitstream specification defines compatible
-  bytes; it does not establish implementation hardening. Fuzzing and the
-  extracted GPU execution gate remain open (see below).
+  bytes; it does not establish implementation hardening. Bounded synthetic
+  fuzzing is available; the extracted GPU execution gate remains open.
 
 ## Active defenses (by design)
 
@@ -42,11 +42,12 @@ against, what they do not, and which guarantees are contracts.
 - **Small fixed ABI:** structure sizes are asserted at compile time; reserved
   fields and unknown flags/kinds are rejection conditions, not warnings.
 
-Since 2026-10-20 each of these defenses has a test that injects one defect
-into an otherwise valid block or store and requires the rejection: 45 cases
-over the block rules and integrity checks, 30 over the store rules
-(`tests/test_malformed.c`, `tests/test_store.c`). A defense that has never
-been observed to fire is not counted as one.
+The initial extraction had 45 block assertions and 30 store rejection cases.
+The shared block matrix now injects 43 defects and checks exact valid recovery
+after each. API regressions add count/extent overflow, invalid profile/width,
+unaligned input and overlapping decode-buffer checks. See
+[the test inventory](../tests/README.md) for current coverage. Passing these
+tests does not prove every possible malformed input is handled safely.
 
 **The HIP decoder in this repository has not been executed** (see
 `docs/extraction.md`). Its in-decode checks are a line-by-line port of the
@@ -79,8 +80,10 @@ exact contract.
 
 ## Remaining implementation qualification
 
-- Fuzz the CPU parser and model-table validation; replay malformed blocks
-  through the GPU gate where practical.
+- The CPU parser, model tables, round trips and synthetic store parser have
+  [bounded fuzz targets](../tests/fuzz/README.md) with ASan/UBSan. Extend their
+  corpus and duration as needed; replay malformed blocks through the GPU gate
+  during an available window.
 - Extend the existing malformed-input matrix with sanitizer coverage and
   retained fuzz regressions. Check destination guards and recovery after a
   failed decode; do not interpret partially written output as success.

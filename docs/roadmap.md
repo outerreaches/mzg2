@@ -49,14 +49,16 @@ Still open in this phase:
   during the extraction. The gate is full-block agreement with the CPU
   reference on the golden vectors and on real store blocks, with the error
   flags exercised by the same injected defects the CPU tests use.
-- **Fuzzing** the validation surface, which is currently covered by
-  hand-written cases.
-- **Enforced hardware scope.** The format and public header already state
-  wave32-only GPU support. Add an executable rejection of unsupported wave
-  sizes before qualification; a wave64 implementation is later work.
-- **Store-building usability.** The writer is published in Moonshine, not in
-  this repository. Document a pinned route before deciding whether a separate
-  standalone writer is needed.
+- **Broader hardening.** CPU ASan/UBSan, four bounded synthetic fuzz targets,
+  API-boundary regressions and GCC/Clang CI now exist. A short fuzz smoke does
+  not establish hostile-input safety; longer campaigns remain useful.
+- **Hardware execution.** The launch API and prepared parity runner reject
+  non-wave32 devices. The runner compiles for `gfx1151`; execution and the
+  device checks remain unqualified until a GPU window. A wave64 implementation
+  is later work.
+- **Standalone writer, optional.** The writer remains in Moonshine; the
+  [pinned public route](store-building.md) now documents building and checking
+  a store. A separate local writer is not required for the scoped release.
 
 ## Phase 3 — screen MZG2 v3 — planned
 

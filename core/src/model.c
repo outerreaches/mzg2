@@ -20,7 +20,8 @@ bool mzg2_model_validate(const mzg2_model *model, const mzg2_model_spec *spec)
     uint32_t symbol;
     uint32_t slot;
 
-    if (!model || !spec) {
+    if (!model || !spec ||
+        (spec->symbol_bits != 4u && spec->symbol_bits != 8u)) {
         return false;
     }
     count = model->symbol_count;
@@ -65,7 +66,8 @@ bool mzg2_model_entry_validate(const mzg2_model_entry *entry,
 {
     uint32_t model;
 
-    if (!entry || !profile) {
+    if (!entry || !profile || profile->model_count == 0u ||
+        profile->model_count > MZG2_MAX_MODELS) {
         return false;
     }
     for (model = 0u; model < profile->model_count; ++model) {
@@ -89,7 +91,8 @@ bool mzg2_model_build(const uint64_t counts[256], const mzg2_model_spec *spec,
     uint32_t symbol;
     uint32_t value;
 
-    if (!counts || !spec || !out) {
+    if (!counts || !spec || !out ||
+        (spec->symbol_bits != 4u && spec->symbol_bits != 8u)) {
         return false;
     }
     memset(out, 0, sizeof(*out));
@@ -101,6 +104,11 @@ bool mzg2_model_build(const uint64_t counts[256], const mzg2_model_spec *spec,
             continue;
         }
         if (value_count >= MZG2_MAX_SYMBOLS) {
+            return false;
+        }
+        /* Check before summing: a wrapped total can evade the scaling
+         * bound and turn a valid-looking histogram into invalid tables. */
+        if (counts[value] > UINT64_MAX / MZG2_MODEL_SLOTS - total) {
             return false;
         }
         values[value_count++] = (uint8_t)value;

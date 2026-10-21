@@ -243,6 +243,9 @@ bool mzg2_models_from_planes(const mzg2_profile *profile, const void *source,
         mzg2_set_error(error, error_size, "invalid model build arguments");
         return false;
     }
+    if (!mzg2_profile_check(profile, error, error_size)) {
+        return false;
+    }
     counts = (uint64_t (*)[256])calloc(profile->model_count, sizeof(*counts));
     if (!counts) {
         mzg2_set_error(error, error_size, "symbol count allocation failed");
@@ -346,6 +349,7 @@ bool mzg2_encode_block(const mzg2_profile *profile, uint32_t layer,
     for (plane = 0u; plane < plane_count; ++plane) {
         if (planes[plane].offset != expected_offset ||
             planes[plane].bytes == 0u ||
+            planes[plane].bytes > profile->output_bytes - expected_offset ||
             planes[plane].model >= profile->model_count) {
             mzg2_set_error(error, error_size,
                            "plane %u is not the next payload run", plane);
@@ -499,6 +503,20 @@ uint32_t mzg2_decode_block(const mzg2_profile *profile, uint32_t layer,
                        "destination of %u bytes is short of %u",
                        destination_bytes, profile->output_bytes);
         return MZG2_ERROR_BOUNDS;
+    }
+    /* Decode is out-of-place. Subtractions avoid overflowing pointer-range
+     * endpoints, and reject partial overlap in either direction. */
+    {
+        const uintptr_t source_address = (uintptr_t)block;
+        const uintptr_t output_address = (uintptr_t)destination;
+        const bool overlaps = source_address <= output_address
+            ? output_address - source_address < block_bytes
+            : source_address - output_address < profile->output_bytes;
+
+        if (overlaps) {
+            mzg2_set_error(error, error_size, "block and destination overlap");
+            return MZG2_ERROR_BOUNDS;
+        }
     }
     if (!mzg2_block_validate(profile, layer, expert, block, block_bytes, &view,
                              error, error_size)) {

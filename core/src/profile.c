@@ -35,8 +35,8 @@ uint32_t mzg2_profile_tile_count(const mzg2_profile *profile)
     if (!profile || profile->tile_bytes == 0u) {
         return 0u;
     }
-    return (profile->output_bytes + profile->tile_bytes - 1u) /
-           profile->tile_bytes;
+    return profile->output_bytes / profile->tile_bytes +
+           (profile->output_bytes % profile->tile_bytes != 0u);
 }
 
 uint32_t mzg2_profile_tile_output_bytes(const mzg2_profile *profile,
@@ -66,7 +66,7 @@ void mzg2_profile_tile_rules(const mzg2_profile *profile,
         return;
     }
     memset(rules, 0, sizeof(*rules));
-    if (!profile) {
+    if (!profile || profile->model_count > MZG2_MAX_MODELS) {
         return;
     }
     rules->tile_bytes = profile->tile_bytes;

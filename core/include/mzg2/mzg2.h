@@ -139,7 +139,8 @@ typedef struct {
  * GPU launch path run this before touching a destination.
  *
  * `layer` and `expert` are the identity the caller asked for; the block must
- * agree with it.
+ * agree with it. The block base must be at least 4-byte aligned so model
+ * tables can be accessed safely; invalid profiles and bases are rejected.
  */
 bool mzg2_block_validate(const mzg2_profile *profile, uint32_t layer,
                          uint32_t expert, const void *block,
@@ -194,6 +195,7 @@ bool mzg2_encode_block(const mzg2_profile *profile, uint32_t layer,
  * CPU reference decoder. Writes exactly `profile->output_bytes` and returns
  * the format's error flags; on a nonzero return the destination is invalid
  * (docs/format.md 9). `error` receives a message for the first failure.
+ * The block must be 4-byte aligned and must not overlap the destination.
  */
 uint32_t mzg2_decode_block(const mzg2_profile *profile, uint32_t layer,
                            uint32_t expert, const void *block,

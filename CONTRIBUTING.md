@@ -8,8 +8,11 @@ documentation issues and an independent implementation read from
 reference codec and the HIP kernel share an author and cannot test each
 other's assumptions.
 
-`make test` must pass before a change is proposed: 316 model-free checks, no
-GPU and no model weights required.
+`make test` must pass before a change is proposed: seven CPU test executables,
+no GPU and no model weights required. Parser/codec changes also run
+`make sanitize` and `make fuzz-smoke`; see [fuzzing](tests/fuzz/README.md).
+The CPU CI uses GCC and Clang. HIP compilation and execution are separate
+gates; never count a build as device qualification.
 
 Core rules, for documents and code alike:
 

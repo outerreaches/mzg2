@@ -1,0 +1,47 @@
+name: CPU qualification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  portable:
+    name: CPU (${{ matrix.compiler }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build and test from a clean checkout
+        run: make -j2 CC=${{ matrix.compiler }} BUILD_DIR=build/ci all
+      - name: Regenerate synthetic vectors without drift
+        run: |
+          make CC=${{ matrix.compiler }} BUILD_DIR=build/ci vectors
+          git diff --exit-code -- tests/vectors
+
+  sanitizers:
+    name: ASan, UBSan and bounded fuzzing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Clang sanitizer runtimes
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang libclang-rt-dev
+      - name: Unit tests under ASan and UBSan
+        run: make -j2 sanitize
+      - name: Synthetic fuzz smoke (serial, bounded)
+        run: make -j2 fuzz-smoke FUZZ_RUNS=2000

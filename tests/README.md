@@ -7,9 +7,24 @@ Model-free. No GPU, no ROCm, no model weights, no network, no fixed paths:
 |---|---:|---|
 | `test_format` | 99 | ABI sizes, profile rules, model build/validate, adapter geometry, the zero-gauge transform |
 | `test_codec` | 69 | roundtrip, coded and raw tiles, determinism, re-encode fixed point, the K3 geometry on a synthetic payload |
-| `test_malformed` | 45 | one injected defect per rule: header, model table, descriptor, integrity, terminal invariants |
+| `test_malformed` | 176 | 43 injected defects, allocation checks and exact valid recovery after each: header, model table, descriptor, integrity, terminal invariants |
 | `test_store` | 59 | span and read paths, plus 30 rejection cases on a store the test builds in a temporary directory |
 | `test_vectors` | 44 | the committed golden vectors decode, match the catalogue and re-encode byte-identically |
+| `test_api` | 25 | histogram/geometry/plane arithmetic, invalid profiles and widths, alignment and overlapping buffers |
+| `test_decoder_cases` | 191 | the shared future HIP qualification cases exercised through the CPU backend; not a GPU pass |
+
+Total: 663 assertions across seven binaries. The last binary deliberately
+replays the golden and malformed cases to test the qualification harness.
+
+Clean GCC/Clang builds and ASan/UBSan tests run in
+[CPU CI](../.github/workflows/cpu.yml). Locally, `BUILD_DIR=build/clang` keeps a
+compiler configuration separate; use a new directory when changing flags.
+`make sanitize CLANG=clang-17` runs the instrumented CPU suite, and
+`make fuzz-smoke CLANG=clang-17` runs the [bounded fuzzers](fuzz/README.md).
+
+`make BUILD_DIR=build/hip hip-test-build` only compiles and links the optional
+HIP runner. Its [execution gate](../docs/gpu-qualification.md) requires an
+available GPU window and is not part of CPU CI.
 
 Every rejection case starts from a block or store that passes and changes one
 thing, so each gate has been seen to fail. A validator that has never failed

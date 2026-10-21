@@ -45,6 +45,13 @@ bool mzg2_block_validate(const mzg2_profile *profile, uint32_t layer,
         mzg2_set_error(error, error_size, "invalid block validation arguments");
         return false;
     }
+    if (!mzg2_profile_check(profile, error, error_size)) {
+        return false;
+    }
+    if ((uintptr_t)block % _Alignof(mzg2_model_entry) != 0u) {
+        mzg2_set_error(error, error_size, "block base must be 4-byte aligned");
+        return false;
+    }
     if (layer == 0u || layer > profile->max_layers ||
         expert >= profile->experts_per_layer) {
         mzg2_set_error(error, error_size, "layer %u expert %u out of profile",

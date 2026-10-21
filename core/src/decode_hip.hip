@@ -240,11 +240,21 @@ extern "C" bool mzg2_hip_decode_launch(
                              &view, error, error_size)) {
         return false;
     }
+    int device = 0, wave_size = 0;
+    hipError_t status = hipGetDevice(&device);
+    if (status == hipSuccess) {
+        status = hipDeviceGetAttribute(&wave_size, hipDeviceAttributeWarpSize,
+                                        device);
+    }
+    if (status != hipSuccess || wave_size != static_cast<int>(MZG2_LANES)) {
+        set_error(error, error_size, "MZG2 requires wave32 (reported %d): %s",
+                  wave_size, hipGetErrorString(status));
+        return false;
+    }
     mzg2_profile_tile_rules(profile, &rules);
 
     hipStream_t stream = static_cast<hipStream_t>(stream_opaque);
-    hipError_t status =
-        hipMemsetAsync(error_device, 0, sizeof(*error_device), stream);
+    status = hipMemsetAsync(error_device, 0, sizeof(*error_device), stream);
 
     if (status != hipSuccess) {
         set_error(error, error_size, "clear MZG2 error flag: %s",

@@ -4,6 +4,10 @@ What moved out of the qualified Kimi K3 implementation into this repository,
 what changed on the way, what the extraction found, and what evidence backs
 it.
 
+This records the initial extraction at `4fe3ba2`. Subsequent CPU hardening,
+fuzzing and the prepared HIP runner are tracked in [releasing.md](releasing.md);
+the original measurements below have not been relabelled as new runs.
+
 The guiding rule was the one in `CONTRIBUTING.md`: the core never learns a
 model's identity. Everything K3-specific is in `adapters/kimi-k3/`.
 

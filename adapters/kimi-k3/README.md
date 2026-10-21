@@ -22,4 +22,4 @@ model.
 
 Building a store is not here: for K3 that is the Moonshine transcoder, which
 reads the official checkpoint. This adapter states the names and the layout a
-transcoder needs.
+transcoder needs. See the [pinned build and verification route](../../docs/store-building.md).

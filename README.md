@@ -34,9 +34,9 @@ kernel, or a second model adapter.
 Two limits worth stating up front:
 
 - **The HIP decoder compiles but has not been run in this repository.** It is
-  a direct port of the qualified kernel, reviewed against it, and the CPU
-  reference is its oracle — but the parity run is still owed. See
-  [`docs/extraction.md`](docs/extraction.md).
+  a port of the qualified kernel, and the CPU reference is its oracle — but
+  the parity run is still owed. A compile-only qualification runner is ready;
+  see [`docs/gpu-qualification.md`](docs/gpu-qualification.md).
 - **MZG2 is not a universal GPU codec.** One adapter exists. A second model
   family — GLM 5.3 first, DeepSeek V4 Pro as the alternative — is the gate
   that tests whether the core boundary is genuinely reusable. The
@@ -49,8 +49,10 @@ No GPU, no ROCm and no model weights are needed for the CPU targets:
 
 ```sh
 make            # library, tools and the test suite
-make test       # 316 model-free checks across five binaries
+make test       # seven model-free CPU test binaries
 make hip        # the HIP decoder (needs ROCm; GPU_ARCH=gfx1151 by default)
+make sanitize   # CPU tests with Clang ASan + UBSan
+make fuzz-smoke # bounded synthetic libFuzzer runs (Clang + Python 3)
 ```
 
 To check an existing store — it decodes blocks and, with `--reencode`,
@@ -59,6 +61,10 @@ requires `encode(decode(block)) == block`:
 ```sh
 ./tools/mzg2_store_check kimi-k3 /path/to/expert-store-mzg2 --experts 4 --reencode
 ```
+
+See [store building](docs/store-building.md) for a pinned Moonshine transcode
+route. Synthetic tests and fuzzing need no modelstore reads. HIP compilation
+does not run a kernel; execute the parity runner only in a GPU window.
 
 ## Contents
 
@@ -77,6 +83,8 @@ Specification and design:
 - [`docs/roadmap.md`](docs/roadmap.md) — phases and their status.
 - [`docs/releasing.md`](docs/releasing.md) — CPU preparation, GPU-window gates,
   and the next research release.
+- [`docs/gpu-qualification.md`](docs/gpu-qualification.md) — compile-only prep
+  and explicit synthetic/real-store parity commands.
 - [`docs/optimization-roadmap.md`](docs/optimization-roadmap.md) — the
   measured optimization funnel and closed ideas.
 

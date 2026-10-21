@@ -376,4 +376,6 @@ Still open:
   a new version number rather than silent adoption (§10). The negotiation
   story for a v3 reader meeting v2 stores is not yet written.
 - **Adversarial hardening** (`docs/security.md`): the validation surface is
-  covered by hand-written injected-defect tests, not by fuzzing.
+  covered by injected-defect tests and bounded synthetic CPU fuzzing. This
+  does not establish hostile-input safety; extracted GPU execution remains
+  pending.

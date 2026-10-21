@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Add GCC/Clang CPU CI, separate build directories, ASan/UBSan and four
+  bounded synthetic libFuzzer targets. CPU tests now execute 663 assertions.
+- Reject wrapped histogram totals and plane extents, invalid profiles/symbol
+  widths, unaligned block bases and overlapping CPU decode buffers; compute
+  tile counts without overflowing the round-up addition. Golden bytes stay
+  unchanged.
+- Prepare a compile-only HIP qualification runner using the same corruption
+  matrix as CPU tests, exact recovery after each defect, golden parity,
+  destination guards and an optional bounded source-bound store sample.
+  Reject non-wave32 devices before GPU dispatch. GPU execution remains owed.
+- Document the pinned public Moonshine store-building route.
 - Reconcile the security policy, provenance and roadmap with the published
   extraction. Normative format status is separate from decoder hardening.
 - Record the CPU-first release plan, the outstanding HIP execution gate,
