@@ -5,10 +5,10 @@
 The qualified K3 implementation was developed in
 **[Moonshine](https://github.com/outerreaches/moonshine)**, an MIT-licensed
 engine that was extracted from the DS4 tree with retained DS4 and GGML
-notices. The MZG2 implementation lives in that repository today
+notices. The original engine integration and store-building tools live there
 (`k3_mzg2.h`, `k3_mzg2.cu`, `tools/transcode_mzg2_*`,
-`tools/build_mzg2_bundle.py`, `tests/test_build_mzg2_bundle.py`) and this
-repository documents its format.
+`tools/build_mzg2_bundle.py`, `tests/test_build_mzg2_bundle.py`). This repository
+now carries the extracted codec as well as its format specification.
 
 Qualification identities (August 2026):
 
@@ -29,8 +29,8 @@ Qualification identities (August 2026):
 
 The code in `core/` and `adapters/kimi-k3/` was extracted from the Moonshine
 files below, at the clean-source commits recorded above. It is a
-reimplementation against the same format rather than a copy: the constants
-became profile fields, the C++/HIP store reader became portable C, and the
+port and adaptation against the same format: the constants became profile
+fields, the C++/HIP store reader became portable C, and the
 transcoder's scalar encoder and verifier became the published reference
 codec. No third-party source was introduced.
 
@@ -45,8 +45,8 @@ codec. No third-party source was introduced.
 The frequency-quantization arithmetic and its tie-breaks were ported
 unchanged, because the resulting table bytes are part of a stored block.
 `docs/extraction.md` records the two places where the published core is
-stricter than the original reader, the one implicit behaviour that became an
-explicit profile field, and the byte-level evidence that the extracted codec
+stricter than the original reader, the implicit behaviours that became
+explicit profile fields, and the byte-level evidence that the extracted codec
 reproduces the qualified store.
 
 No model weights, derived store blocks, logs, prompts or host paths were

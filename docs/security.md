@@ -14,8 +14,9 @@ against, what they do not, and which guarantees are contracts.
   below bounds the blast radius of malformed files, but the CPU parser and the
   HIP decode kernels are **not** hardened against crafted inputs, and the
   checksum is not an authentication mechanism. **Do not decode stores from
-  untrusted sources.** Hardening and fuzzing are planned ahead of normative
-  status (see below).
+  untrusted sources.** A normative bitstream specification defines compatible
+  bytes; it does not establish implementation hardening. Fuzzing and the
+  extracted GPU execution gate remain open (see below).
 
 ## Active defenses (by design)
 
@@ -57,15 +58,17 @@ codec only until the parity run happens.
 The checksum is a non-cryptographic 32-bit folded XOR over output dwords
 (`docs/format.md` §8.4).
 
-- **Detects:** accidental corruption affecting tile payloads and decode
-  output, including truncation and partial writes, with the coverage of a
-  well-distributed 32-bit redundancy per 16 KiB tile.
+- **Detects:** many accidental changes to tile payloads and decode output,
+  alongside the bounds and terminal-state checks. The folded XOR is linear:
+  cancelling changes can collide. No uniform random-error detection rate or
+  exhaustive corruption coverage is claimed.
 - **Does not:** authenticate data, resist deliberate tampering (an adversary
   can compute valid checksums), or cover metadata regions (headers,
   descriptors, and model tables are structurally validated but not
   checksum-protected). The v2 design keeps the checksum non-cryptographic by
-  choice for decode speed; whether metadata gains stronger protection is an
-  open release-gate decision.
+  choice for decode speed. Stronger metadata protection requires a separately
+  specified format or container change; the current research release retains
+  the trusted-local-store boundary.
 
 ## Error codes
 
@@ -74,18 +77,19 @@ Per-block error flags (any nonzero = fail): `BOUNDS` (geometry/validation),
 `TERMINAL` (final invariant violations). See `docs/format.md` §9 for the
 exact contract.
 
-## Planned hardening (before normative status)
+## Remaining implementation qualification
 
 - Fuzz the CPU parser and model-table validation; replay malformed blocks
   through the GPU gate where practical.
-- A malformed-input test matrix covering truncation, overflow, overlapping
-  descriptors, invalid models, invalid states, bad terminal cursors, raw
-  escapes, and output aliasing.
-- An explicit statement in the specification that destination contents are
-  invalid after any decode error (already in §9) and tests asserting it.
+- Extend the existing malformed-input matrix with sanitizer coverage and
+  retained fuzz regressions. Check destination guards and recovery after a
+  failed decode; do not interpret partially written output as success.
+- Run the extracted HIP decoder against CPU results and injected defects
+  during a dedicated GPU window. Compilation alone does not close this gate.
+- Keep the destination-invalidation contract in the public API and caller
+  examples. It applies to the complete destination, not only the failed tile.
 
 ## Reporting
 
-Security-relevant findings: use GitHub security advisories on this repository
-once public, or the contact route listed on the repository profile. Please do
-not open public issues for memory-safety reports before a fix is available.
+Security-relevant findings: follow [SECURITY.md](../SECURITY.md). Please do not
+open public issues for memory-safety reports before a fix is available.

@@ -20,6 +20,10 @@ decoder and the Kimi K3 adapter, extracted from the qualified implementation.
 The repository was first published on 2026-10-15 (tag `v0.1.0-draft`) as the
 specification and design home; this is the extraction that release pointed at.
 
+The changelog's 0.2.0 extraction is a development milestone on `main`, not a
+tagged GPU-qualified release. The remaining qualification and packaging gates
+are in [the release checklist](docs/releasing.md).
+
 What that gives you: a portable C library that encodes and decodes the v2
 bitstream with no GPU, no ROCm and no model weights, plus a HIP kernel for the
 wave32 path. What it does not yet give you: a published store writer (building
@@ -71,6 +75,8 @@ Specification and design:
 - [`docs/security.md`](docs/security.md) — threat model, checksum properties,
   error semantics, planned hardening.
 - [`docs/roadmap.md`](docs/roadmap.md) — phases and their status.
+- [`docs/releasing.md`](docs/releasing.md) — CPU preparation, GPU-window gates,
+  and the next research release.
 - [`docs/optimization-roadmap.md`](docs/optimization-roadmap.md) — the
   measured optimization funnel and closed ideas.
 

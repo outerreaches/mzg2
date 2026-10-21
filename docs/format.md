@@ -189,6 +189,13 @@ Validation rules (rejected if any fails):
 Models are data, not code: a decoder needs no model-specific knowledge to
 parse or validate them.
 
+The 15-symbol limit applies to **each** model, including an 8-bit plane.
+An 8-bit symbol width permits values in 0..255, but does not provide a
+256-symbol entropy table. The reference model builder rejects more than 15
+observed permitted values before tile raw fallback is considered. A full-byte
+FP8 adapter therefore needs a different representation or format revision;
+changing the profile alone is insufficient.
+
 ## 8. Tiles and decode
 
 ### 8.1 Tile descriptors (32 bytes, `tile_count` per block)
@@ -348,6 +355,10 @@ separates these rules from one model's constants.
 
 Still open:
 
+- **Alphabet capacity.** v2 has at most two models of at most 15 symbols
+  each (§7). Evaluate representation and format requirements before promising
+  a full-byte FP8 or full-16-code MXFP4 adapter. Keep v2 stores and golden
+  vectors compatible while evaluating any successor.
 - **A block does not describe its own symbol width** (§8.3). The profile
   supplies it, so the container is not self-describing where it has more than
   one plane kind. Fixing it is a format revision, not an erratum: v2 is what

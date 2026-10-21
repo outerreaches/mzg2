@@ -87,8 +87,9 @@ enforces the specification:
   high word is always zero.
 
 Enforcing them is a narrowing: a block the old reader accepted could now be
-rejected. No such block exists in the qualified store (12 sampled experts
-across three layers, below), and a writer cannot produce one.
+rejected. None of the 14 sampled experts violated these rules; the qualified
+writer's layout and checksum assignments satisfy both. The sample does not
+constitute a new exhaustive scan of the full store.
 
 ### A restricted alphabet compresses very differently per symbol width
 
@@ -128,8 +129,9 @@ is not evidence.
 That last line is the extraction's byte-level claim. A decoder alone proves a
 block parses; a matching re-encode proves the extracted encoder's entropy
 model, frequency quantization with its tie-breaks, lane interleave and block
-layout are the ones that produced the store. It needs no source checkpoint,
-no GPU, and no licence.
+layout are the ones that produced the sampled store blocks. It needs no
+additional source checkpoint or GPU; access to the derived weights remains
+subject to their original model license.
 
 Sampled reduction was 12.838%–13.111% per sampled group, bracketing the
 recorded full-store figure of 13.0674%.

@@ -11,7 +11,7 @@ other's assumptions.
 `make test` must pass before a change is proposed: 316 model-free checks, no
 GPU and no model weights required.
 
-Core rules, for documents and (future) code alike:
+Core rules, for documents and code alike:
 
 1. Do not add model weights or derived expert-store blocks. No exceptions.
 2. Keep model-specific tensor logic in an adapter; the core never learns K3

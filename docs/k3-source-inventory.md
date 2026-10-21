@@ -2,6 +2,11 @@
 
 Date: 2026-08-23
 
+Historical record: the source/runtime observations below describe the August
+freeze, not the current repository or deployment. The October extraction and
+its outstanding qualification are recorded in [extraction.md](extraction.md)
+and [releasing.md](releasing.md).
+
 ## Purpose
 
 Preserve the qualified Moonshine MZG2 implementation before extracting or optimizing it. This document first recorded the broad uncommitted working tree, then its reviewed resolution, without copying implementation code into this repository.
@@ -10,7 +15,8 @@ The corresponding machine-readable capture identity is maintained in the private
 
 ## Clean-source resolution
 
-Moonshine `main` is clean at `c773930` and contains the captured work in five local commits:
+At the freeze, Moonshine `main` was clean at `c773930` and contained the
+captured work in five local commits:
 
 1. `c5b65c7` — portable prefix and route planning cores;
 2. `c20dae7` — portable static-Q8 screening core;

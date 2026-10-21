@@ -29,12 +29,14 @@ Since the 2026-10-20 extraction this is code, not intent:
 |---|---|
 | container ABI, entropy models, tiles, validation, reference codec, store reader, HIP decoder | `core/` |
 | magic, geometry, plane layout, symbol widths, value alphabet, value transform, source binding | `adapters/kimi-k3/`, via an `mzg2_profile` |
-| store construction | not published yet; for K3 it is the Moonshine transcoder |
+| store construction | published in Moonshine; not yet a tool in this repository |
 | cache admission, I/O scheduling, staging | the consuming engine |
 
-An adapter is a profile plus a plane layout plus a value transform. The core
-holds no model constant, and `tests/fixture.h` proves it by driving the same
-code with a synthetic profile that is not Kimi K3.
+Within v2's limits, an adapter is a profile plus a plane layout plus a value
+transform. The core has no K3 geometry or identity constants, and
+`tests/fixture.h` exercises a synthetic profile. It still implements a
+15-symbol, at-most-two-model ABI; full-byte FP8 is not supported by merely
+changing a profile. A second real model family remains the reuse gate.
 
 The CPU reference codec is the normative implementation and the GPU kernel's
 oracle: it reproduces the wave32 lane interleave on one thread, so a single

@@ -1,6 +1,18 @@
 # Changelog
 
-## 0.2.0 — 2026-10-20 — the codec extraction
+## Unreleased
+
+- Reconcile the security policy, provenance and roadmap with the published
+  extraction. Normative format status is separate from decoder hardening.
+- Record the CPU-first release plan, the outstanding HIP execution gate,
+  and v2's 15-symbol limit for second-model planning.
+- Clarify that 0.2.0 is an untagged code milestone; the existing GitHub
+  release/tag remains the documents-only `v0.1.0-draft`.
+
+## 0.2.0 development milestone — 2026-10-20 — the codec extraction
+
+Published on `main` at `4fe3ba2`; no 0.2.0 release tag or GPU qualification
+is implied. See [the release checklist](docs/releasing.md).
 
 The repository was the specification home; it is now the implementation home
 as well. Full record and evidence: [`docs/extraction.md`](docs/extraction.md).

@@ -4,6 +4,11 @@ Status of each phase is stated inline; the K3 reference remains the
 regression profile throughout. Optimization details, kill gates, and closed
 ideas live in [`optimization-roadmap.md`](optimization-roadmap.md).
 
+For the immediate sequence, use [the release checklist](releasing.md): CPU
+hardening, CI, documentation and a compile-only HIP runner can be prepared
+while the GPU is occupied. GPU parity and performance runs wait for a
+dedicated window. The next release is K3-scoped; broader reuse follows later.
+
 ## Phase 0 — freeze the K3 reference — done
 
 - Moonshine MZG2 changes reviewed and committed (`c5b65c7` … `c773930`).
@@ -46,10 +51,12 @@ Still open in this phase:
   flags exercised by the same injected defects the CPU tests use.
 - **Fuzzing** the validation surface, which is currently covered by
   hand-written cases.
-- **An explicit wave64 statement**, and a kernel if one is wanted: the v2
-  renormalization order is defined by 32 lanes.
-- **A published store writer.** Building a K3 store still means the Moonshine
-  transcoder.
+- **Enforced hardware scope.** The format and public header already state
+  wave32-only GPU support. Add an executable rejection of unsupported wave
+  sizes before qualification; a wave64 implementation is later work.
+- **Store-building usability.** The writer is published in Moonshine, not in
+  this repository. Document a pinned route before deciding whether a separate
+  standalone writer is needed.
 
 ## Phase 3 — screen MZG2 v3 — planned
 
@@ -62,6 +69,11 @@ The extraction adds one candidate to the v3 list: a block does not describe
 its own symbol width, so a decoder cannot work from the bitstream alone.
 Moving plane widths into block metadata would close that.
 
+The 15-symbol-per-model limit is another explicit design constraint. A
+full-byte FP8 or full-16-code MXFP4 representation does not fit the current
+tables merely because a profile can specify 8-bit or 4-bit symbol width.
+Evaluate that requirement independently of the metadata-size screen.
+
 ## Phase 4 — second adapter — planned, and the gate that matters
 
 Evaluate GLM 5.3 first; DeepSeek V4 Pro is the alternative. Reuse the
@@ -69,17 +81,24 @@ screening funnel and the generic interface, not K3's bitstream parameters. If
 the core interface needs substantial redesign, keep MZG2 K3-specific rather
 than forcing a false abstraction.
 
-The core boundary now exists in code, which makes this testable rather than
-hypothetical: a second adapter should need a profile, a plane layout and a
-value transform, and nothing in `core/`.
+The core boundary now exists in code, but the v2 ABI still reflects K3's
+restricted alphabet. First determine whether the second model fits it; if
+not, specify a representation or a versioned extension while preserving v2.
+Existing GLM/MiMo codec experiments are candidates to compare, not evidence
+that this unchanged core already supports those families.
 
-## Phase 5 — public release — done (2026-10-15 documents, 2026-10-20 codec)
+## Phase 5 — source publication done; qualified code release pending
 
 The public remote (`https://github.com/outerreaches/mzg2`) was created after
 the provenance, clean-build, and security gates passed, and the model-license
 and reproducibility documentation shipped with it. The codec extraction
 followed on 2026-10-20. Code, specification, and evidence are published;
 weights and derived stores are not, and will not be.
+
+The existing release/tag is `v0.1.0-draft`, containing the documents. The
+0.2.0 extraction is on `main` without a matching code release. Closing the
+[candidate checklist](releasing.md) is the next publication milestone; source
+availability is not a completed GPU or implementation-hardening gate.
 
 The second-adapter gate (Phase 4) remains open. Rather than hold publication
 on it, the published documents state the K3-only scope explicitly — README
